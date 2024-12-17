@@ -27,7 +27,9 @@
     "@rbxts/charm": "^0.8.1",
     "@rbxts/charm-sync": "^0.1.1",
     "@rbxts/event-emitter": "^1.4.0",
-    "@rbxts/react": "^17.2.1",
+    "@rbxts/flamework-react-utils": "^1.0.6",
+    "@rbxts/react": "^17.2.3",
+    "@rbxts/react-charm": "^0.1.1",
     "@rbxts/react-roblox": "^17.2.1",
     "@rbxts/services": "^1.5.5"
   }

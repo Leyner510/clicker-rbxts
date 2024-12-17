@@ -6,7 +6,8 @@
 		"ts:out/server/components/player-component@PlayerComponent": "server/components/player-component@PlayerComponent",
 		"ts:out/server/services/player-service@PlayerService": "server/services/player-service@PlayerService",
 		"ts:out/shared/Events@GlobalEvents": "shared/Events@GlobalEvents",
-		"ts:out/client/controllers/ui-controller@UserInterfaceController": "client/controllers/ui-controller@UserInterfaceController"
+		"ts:out/client/controllers/ui-controller@UserInterfaceController": "client/controllers/ui-controller@UserInterfaceController",
+		"ts:out/server/services/room-generator-service@RoomGeneratorService": "server/services/room-generator-service@RoomGeneratorService"
 	},
 	"metadata": {}
 }

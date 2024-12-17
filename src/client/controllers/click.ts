@@ -5,7 +5,7 @@ import CharmSync from "@rbxts/charm-sync";
 
 @Controller({})
 export class Click implements OnStart {
-	private moneyAtom = atom<number>(0);
+	public moneyAtom = atom<number>(0);
 	private updatesAtoms = atom<number>(0);
 	private clickAtom = atom<number>(0);
 	private syncer = CharmSync.client({

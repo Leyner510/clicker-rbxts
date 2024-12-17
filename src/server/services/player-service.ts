@@ -2,11 +2,11 @@ import { Components } from "@flamework/components";
 import { OnStart, Service } from "@flamework/core";
 import { Players } from "@rbxts/services";
 import { PlayerComponent } from "server/components/player-component";
-import { ServerEvents} from "shared/Events";
+import { ServerEvents } from "shared/Events";
 
 @Service()
 export class PlayerService implements OnStart {
-	constructor(private components: Components) {}
+	constructor(private components: Components) { }
 
 	public onStart() {
 		ServerEvents.hydrate.connect((player) => {

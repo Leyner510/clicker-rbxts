@@ -1,10 +1,14 @@
 // src/client/ui/app.tsx
+import { useFlameworkDependency } from "@rbxts/flamework-react-utils";
 import React from "@rbxts/react";
+import { useAtom } from "@rbxts/react-charm";
+import { Click } from "client/controllers/click";
 import { ClientEvents } from "shared/Events";
-import { MoneyProvider, useMoney } from "client/context/money_context";
 
-const MoneyDisplay: React.FC = () => {
-    const money = useMoney();
+
+const MoneyDisplay = () => {
+    const click = useFlameworkDependency<Click>();
+    const money = useAtom(click.moneyAtom);
 
     return (
         <textlabel
@@ -33,7 +37,7 @@ const MoneyDisplay: React.FC = () => {
 
 export function App() {
     return (
-        <MoneyProvider>
+        <>
             <MoneyDisplay />
             <textbutton
                 key={"Clicks"}
@@ -82,6 +86,6 @@ export function App() {
                 </uistroke>
                 <uitextsizeconstraint MaxTextSize={30} />
             </textbutton>
-        </MoneyProvider>
+        </>
     );
 }

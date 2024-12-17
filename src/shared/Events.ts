@@ -1,6 +1,10 @@
 import { Networking } from "@flamework/networking";
 import type { Atom } from "@rbxts/charm";
 import type CharmSync from "@rbxts/charm-sync";
+import { RunService } from "@rbxts/services";
+
+
+export const IS_PLUGIN = RunService.IsStudio() && !RunService.IsRunning();
 
 interface ClientToServerEvents {
 	click: () => void;

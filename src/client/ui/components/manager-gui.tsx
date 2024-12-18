@@ -1,11 +1,12 @@
 // src/client/ui/components/manager-buttons.tsx
-import React, { useState } from "@rbxts/react";
+import React, { useEffect, useState } from "@rbxts/react";
 import { Button } from "../buttons/botton";
 import { palette } from "../utils/palette";
 import { useFlameworkDependency } from "@rbxts/flamework-react-utils";
 import { Click } from "client/controllers/click";
 import { ClientEvents } from "shared/Events";
 import { useAtom } from "@rbxts/react-charm";
+import { AdditionalMenu } from "../buttons/label";
 
 const COLORS = [palette.purple, palette.blue, palette.green, palette.yellow, palette.red];
 
@@ -38,20 +39,23 @@ const MoneyDisplay = () => {
     );
 };
 
+
 export function Menu() {
     const [colorIndex] = useState(0);
+    const [isAdditionalMenuVisible, setIsAdditionalMenuVisible] = useState(false);
 
     return (
-        <>
+        <>  
             <Button
                 text={"Menu"}
-                onClick={() => print("Menu button clicked")}
+                onClick={() => setIsAdditionalMenuVisible(!isAdditionalMenuVisible)}
                 textSize={32}
                 backgroundColor={COLORS[colorIndex]}
                 size={new UDim2(0, 100, 0, 70)}
                 position={new UDim2(0.1, 0, 0.9, 0.1)}
                 anchorPoint={new Vector2(0.5, 0.5)}
-            />
+            />   
+            <AdditionalMenu isVisible={isAdditionalMenuVisible} />
             <Button
                 text={"Click for money"}
                 onClick={() => ClientEvents.click.fire()}

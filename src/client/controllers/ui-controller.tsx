@@ -2,7 +2,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { Players } from "@rbxts/services";
 import ReactRoblox from "@rbxts/react-roblox";
 import React from "@rbxts/react";
-import { MenuButton } from "client/buttons/menu";
+import { Button } from "client/ui/buttons/botton";
 
 @Controller({})
 export class UserInterfaceController implements OnStart {
@@ -16,7 +16,7 @@ export class UserInterfaceController implements OnStart {
         screenGui.ResetOnSpawn = false;
 
         root.render(
-            ReactRoblox.createPortal(<MenuButton />, screenGui)
+            ReactRoblox.createPortal(<Button />, screenGui)
         )
     }
 }

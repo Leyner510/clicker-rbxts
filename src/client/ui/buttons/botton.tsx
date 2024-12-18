@@ -1,11 +1,8 @@
 import { useMotion } from "@rbxts/pretty-react-hooks";
 import React, { useEffect, useState } from "@rbxts/react";
-import { fonts } from "../ui/utils/fonts";
-import { springs } from "../ui/utils/springs";
-import { palette } from "../ui/utils/palette";
-import { usePx } from "../ui/hooks/use-px";
-import { brighten } from "../ui/utils/color-utils";
-
+import { springs } from "../utils/springs";
+import { palette } from "../utils/palette";
+import { brighten } from "../utils/color-utils";
 
 interface ButtonProps {
     onClick?: () => void;
@@ -19,9 +16,8 @@ interface ButtonProps {
     children?: React.ReactNode;
 }
 
-export function MenuButton({
+export function Button({
     onClick,
-
     text,
     textSize,
     backgroundColor = palette.blue,
@@ -30,7 +26,6 @@ export function MenuButton({
     anchorPoint,
     children,
 }: ButtonProps) {
-    const px = usePx();
 
     const [pressed, setPressed] = useState(false);
     const [hovered, setHovered] = useState(false);
@@ -40,24 +35,23 @@ export function MenuButton({
 
     useEffect(() => {
         if (pressed) {
-            buttonPositionMotion.spring(px(8), springs.responsive);
+            buttonPositionMotion.spring(0, springs.responsive);
             buttonColorMotion.spring(brighten(backgroundColor, -0.1), springs.responsive);
         } else if (hovered) {
-            buttonPositionMotion.spring(-px(8), springs.responsive);
+            buttonPositionMotion.spring(8, springs.responsive);
             buttonColorMotion.spring(brighten(backgroundColor, 0.1), springs.responsive);
         } else {
             buttonPositionMotion.spring(0, springs.responsive);
             buttonColorMotion.spring(backgroundColor, springs.responsive);
         }
-    }, [pressed, hovered, backgroundColor, px]);
+    }, [pressed, hovered, backgroundColor]);
 
     useEffect(() => {
         if (!pressed && hovered) {
-            buttonPositionMotion.impulse(-px(1));
-            buttonPositionMotion.spring(-px(8), springs.bubbly);
+            buttonPositionMotion.impulse(1);
+            buttonPositionMotion.spring(8, springs.bubbly);
         }
     }, [pressed]);
-
     return (
         <frame BackgroundTransparency={1} AnchorPoint={anchorPoint} Size={size} Position={position}>
             <textbutton
@@ -65,7 +59,7 @@ export function MenuButton({
                 Text={text}
                 TextColor3={Color3.fromRGB(252, 223, 3)}
                 TextSize={textSize}
-                TextScaled = {true}
+                TextScaled={true}
                 AutoButtonColor={false}
                 BackgroundColor3={buttonColor}
                 Size={new UDim2(1, 0, 1, 0)}
@@ -81,7 +75,7 @@ export function MenuButton({
                     MouseButton1Up: () => setPressed(false),
                 }}
             >
-                <uicorner CornerRadius={new UDim(0, px(16))} />
+                <uicorner CornerRadius={new UDim(0, 16)} />
                 {children}
             </textbutton>
         </frame>

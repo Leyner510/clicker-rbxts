@@ -7,7 +7,8 @@
 		"ts:out/server/services/player-service@PlayerService": "server/services/player-service@PlayerService",
 		"ts:out/shared/Events@GlobalEvents": "shared/Events@GlobalEvents",
 		"ts:out/client/controllers/ui-controller@UserInterfaceController": "client/controllers/ui-controller@UserInterfaceController",
-		"ts:out/server/services/room-generator-service@RoomGeneratorService": "server/services/room-generator-service@RoomGeneratorService"
+		"ts:out/server/services/room-generator-service@RoomGeneratorService": "server/services/room-generator-service@RoomGeneratorService",
+		"ts:out/server/components/check-grounded-component@GroundCheckComponent": "server/components/check-grounded-component@GroundCheckComponent"
 	},
 	"metadata": {}
 }

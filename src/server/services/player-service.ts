@@ -1,6 +1,7 @@
 import { Components } from "@flamework/components";
 import { OnStart, Service } from "@flamework/core";
 import { Players } from "@rbxts/services";
+import { GroundCheckComponent } from "server/components/check-grounded-component";
 import { PlayerComponent } from "server/components/player-component";
 import { ServerEvents } from "shared/Events";
 
@@ -25,5 +26,14 @@ export class PlayerService implements OnStart {
 		});
 
 		Players.PlayerAdded.Connect((player) => this.components.addComponent<PlayerComponent>(player));
+
+		Players.PlayerAdded.Connect((player) => {
+			player.CharacterAdded.Connect((character) => {
+				const humanoidRootPart = character.FindFirstChild("HumanoidRootPart") as BasePart | undefined;
+				if (humanoidRootPart) {
+					this.components.addComponent<GroundCheckComponent>(humanoidRootPart);
+				}
+			});
+		});
 	}
 }

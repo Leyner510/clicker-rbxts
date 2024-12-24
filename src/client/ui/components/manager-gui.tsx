@@ -51,7 +51,7 @@ export function Menu() {
     };
 
     const products: IProduct[] = [
-        { id: 1, name: "Зелье 1", imageUrl: "rbxassetid://1673109475", onClick: handleBuyPotionLevel1 },
+        { id: 1, name: "Зелье 1", imageUrl: "rbxassetid://13983568527", onClick: handleBuyPotionLevel1 },
         { id: 2, name: "Зелье 2", imageUrl: "rbxassetid://9412229136", onClick: handleBuyPotionLevel2 },
         { id: 3, name: "Зелье 3", imageUrl: "rbxassetid://9412224148", onClick: handleBuyPotionLevel3 },
     ]

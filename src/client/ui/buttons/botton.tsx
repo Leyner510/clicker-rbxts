@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "@rbxts/react";
 import { springs } from "../utils/springs";
 import { palette } from "../utils/palette";
 import { brighten } from "../utils/color-utils";
+import { useClickSound } from "../hooks/use-sound";
+
 
 interface ButtonProps {
     onClick?: () => void;
@@ -14,6 +16,7 @@ interface ButtonProps {
     position?: UDim2;
     anchorPoint?: Vector2;
     children?: React.ReactNode;
+    soundId?: string;
 }
 
 export function Button({
@@ -25,8 +28,8 @@ export function Button({
     position,
     anchorPoint,
     children,
+    soundId = "rbxassetid://1673280232",
 }: ButtonProps) {
-
     const [pressed, setPressed] = useState(false);
     const [hovered, setHovered] = useState(false);
 
@@ -52,6 +55,16 @@ export function Button({
             buttonPositionMotion.spring(8, springs.bubbly);
         }
     }, [pressed]);
+
+    const playClickSound = useClickSound({ soundId });
+
+    const handleClick = () => {
+        if (onClick) {
+            onClick();
+        }
+        playClickSound();
+    };
+
     return (
         <frame BackgroundTransparency={1} AnchorPoint={anchorPoint} Size={size} Position={position}>
             <textbutton
@@ -65,7 +78,7 @@ export function Button({
                 Size={new UDim2(1, 0, 1, 0)}
                 Position={buttonPosition.map((y) => new UDim2(0, 0, 0, y))}
                 Event={{
-                    Activated: onClick,
+                    Activated: handleClick,
                     MouseEnter: () => setHovered(true),
                     MouseLeave: () => {
                         setHovered(false);

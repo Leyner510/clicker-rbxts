@@ -25,6 +25,21 @@ export class PlayerService implements OnStart {
 			playerComponent?.buyUpgrade();
 		});
 
+		ServerEvents.buyPotionLevel1.connect((player) => {
+			const playerComponent = this.components.getComponent<PlayerComponent>(player);
+			playerComponent?.buyPotionLevel1();
+		});
+
+		ServerEvents.buyPotionLevel2.connect((player) => {
+			const playerComponent = this.components.getComponent<PlayerComponent>(player);
+			playerComponent?.buyPotionLevel2();
+		});
+
+		ServerEvents.buyPotionLevel3.connect((player) => {
+			const playerComponent = this.components.getComponent<PlayerComponent>(player);
+			playerComponent?.buyPotionLevel3();
+		});
+
 		Players.PlayerAdded.Connect((player) => this.components.addComponent<PlayerComponent>(player));
 
 		Players.PlayerAdded.Connect((player) => {

@@ -27,10 +27,10 @@ export class GroundCheckComponent extends BaseComponent<{}, BasePart> implements
         raycastParams.FilterType = Enum.RaycastFilterType.Exclude;
 
         const result = Workspace.Raycast(origin, direction, raycastParams);
-        if (result) {
-            print(`${this.instance.Name} на полу`)
-        } else {
-            print(`${this.instance.Name} не на полу`)
-        }
+        // if (result) {
+        //     print(`${this.instance.Name} на полу`)
+        // } else {
+        //     print(`${this.instance.Name} не на полу`)
+        // }
     }
 }

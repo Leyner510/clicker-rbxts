@@ -1,43 +1,17 @@
-// src/client/ui/components/manager-gui.tsx
 import React, { useEffect, useState } from "@rbxts/react";
 import { palette } from "../utils/palette";
-import { useFlameworkDependency } from "@rbxts/flamework-react-utils";
-import { Click } from "client/controllers/click";
 import { ClientEvents } from "shared/Events";
-import { useAtom } from "@rbxts/react-charm";
 import { AdditionalMenu } from "../buttons/label";
 import { Button } from "../buttons/botton";
 
 const COLORS = [palette.purple, palette.blue, palette.green, palette.yellow, palette.red];
 
-// const MoneyDisplay = () => {
-//     const click = useFlameworkDependency<Click>();
-//     const money = useAtom(click.moneyAtom);
-
-//     return (
-//         <textlabel
-//             Text={`Money: ${money}`}
-//             FontFace={Font.fromName("Bangers")}
-//             TextColor3={Color3.fromRGB(252, 223, 3)}
-//             Size={UDim2.fromScale(0.2, 0.1)}
-//             TextScaled={true}
-//             BackgroundColor3={Color3.fromRGB(252, 3, 210)}
-//             Position={UDim2.fromScale(0.5, 0.1)}
-//             AnchorPoint={new Vector2(0.5, 0)}
-//         >
-//             <uicorner CornerRadius={new UDim(1)} />
-//             <uistroke Thickness={10} Color={Color3.fromRGB(255, 255, 255)} ApplyStrokeMode={Enum.ApplyStrokeMode.Border}>
-//                 <uigradient
-//                     Color={new ColorSequence([
-//                         new ColorSequenceKeypoint(0, Color3.fromRGB(197, 255, 90)),
-//                         new ColorSequenceKeypoint(1, Color3.fromRGB(253, 255, 123)),
-//                     ])}
-//                 />
-//             </uistroke>
-//             <uitextsizeconstraint MaxTextSize={30} />
-//         </textlabel>
-//     );
-// };
+interface IProduct {
+    id: number;
+    name: string;
+    imageUrl: string;
+    onClick: () => void;
+}
 
 export function Menu() {
     const [colorIndex] = useState(0);
@@ -64,6 +38,23 @@ export function Menu() {
         setNextUpgradeClick(clickCount + math.random(10, 30))
     };
 
+    const handleBuyPotionLevel1 = () => {
+        ClientEvents.buyPotionLevel1.fire();
+    };
+
+    const handleBuyPotionLevel2 = () => {
+        ClientEvents.buyPotionLevel2.fire();
+    };
+
+    const handleBuyPotionLevel3 = () => {
+        ClientEvents.buyPotionLevel3.fire();
+    };
+
+    const products: IProduct[] = [
+        { id: 1, name: "Зелье 1", imageUrl: "rbxassetid://1673109475", onClick: handleBuyPotionLevel1 },
+        { id: 2, name: "Зелье 2", imageUrl: "rbxassetid://9412229136", onClick: handleBuyPotionLevel2 },
+        { id: 3, name: "Зелье 3", imageUrl: "rbxassetid://9412224148", onClick: handleBuyPotionLevel3 },
+    ]
 
     const generateRandomPosition = () => {
         const minX = 0.1;
@@ -95,7 +86,7 @@ export function Menu() {
                 position={new UDim2(0.1, 0, 0.9, 0.1)}
                 anchorPoint={new Vector2(0.5, 0.5)}
             />
-            <AdditionalMenu isVisible={isAdditionalMenuVisible} />
+            <AdditionalMenu isVisible={isAdditionalMenuVisible} products={products} />
             <Button
                 text={"Click for money"}
                 onClick={handleClickForMoney}

@@ -1,12 +1,15 @@
 import React, { useEffect } from "@rbxts/react";
 import { useMotion } from "@rbxts/pretty-react-hooks";
 import { springs } from "../utils/springs";
+import { IProduct, ProductMenu } from "../components/product-menu";
 
 interface AdditionalMenuProps {
     isVisible: boolean;
+    products: IProduct[];
 }
 
-export function AdditionalMenu({ isVisible }: AdditionalMenuProps) {
+
+export function AdditionalMenu({ isVisible, products }: AdditionalMenuProps) {
     const [menuPosition, menuPositionMotion] = useMotion(0);
     const [menuTransparency, menuTransparencyMotion] = useMotion(1);
     const [textTransparency, textTransparencyMotion] = useMotion(1);
@@ -25,6 +28,7 @@ export function AdditionalMenu({ isVisible }: AdditionalMenuProps) {
         }
     }, [isVisible]);
 
+
     return (
         <frame
             BackgroundColor3={Color3.fromRGB(255, 255, 255)}
@@ -32,6 +36,7 @@ export function AdditionalMenu({ isVisible }: AdditionalMenuProps) {
             Size={UDim2.fromScale(0.2, 0.6)}
             Position={menuPosition.map((y) => new UDim2(0.1, 0, 0.7 - y * 0.2, 0))}
             AnchorPoint={new Vector2(0.5, 0.5)}
+            Visible={isVisible}
         >
             <uicorner CornerRadius={new UDim(0, 16)} />
             <textlabel
@@ -45,6 +50,7 @@ export function AdditionalMenu({ isVisible }: AdditionalMenuProps) {
                 AnchorPoint={new Vector2(0.5, 0)}
                 TextTransparency={textTransparency}
             />
+            <ProductMenu products={products} isVisible={isVisible}/>{}
         </frame>
     );
 };

@@ -9,9 +9,7 @@ export const IS_PLUGIN = RunService.IsStudio() && !RunService.IsRunning();
 interface ClientToServerEvents {
 	click: () => void;
 	buyUpgrade: () => void;
-	buyPotionLevel1: () => void;
-	buyPotionLevel2: () => void;
-	buyPotionLevel3: () => void;
+	buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
 	money: () => void;
 	hydrateForMoney : () => CharmSync.SyncPayload<{ 
 		money: Atom<number> 

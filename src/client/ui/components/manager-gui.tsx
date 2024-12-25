@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "@rbxts/react";
 import { palette } from "../utils/palette";
 import { ClientEvents } from "shared/Events";
 import { AdditionalMenu } from "../buttons/label";
-import { Button } from "../buttons/botton";
+import { Button } from "../buttons/button";
 
 const COLORS = [palette.purple, palette.blue, palette.green, palette.yellow, palette.red];
 
@@ -12,6 +12,8 @@ interface IProduct {
     imageUrl: string;
     onClick: () => void;
 }
+
+
 
 export function Menu() {
     const [colorIndex] = useState(0);
@@ -37,24 +39,15 @@ export function Menu() {
         setIsUpgradeButtonVisible(false);
         setNextUpgradeClick(clickCount + math.random(10, 30))
     };
-
-    const handleBuyPotionLevel1 = () => {
-        ClientEvents.buyPotionLevel1.fire();
-    };
-
-    const handleBuyPotionLevel2 = () => {
-        ClientEvents.buyPotionLevel2.fire();
-    };
-
-    const handleBuyPotionLevel3 = () => {
-        ClientEvents.buyPotionLevel3.fire();
+    const handleBuyPotionLevel = (level: number, cost: number, clickBonus: number, clicksRemaining: number) => {
+        ClientEvents.buyPotionLevel.fire(level, cost, clickBonus, clicksRemaining);
     };
 
     const products: IProduct[] = [
-        { id: 1, name: "Зелье 1", imageUrl: "rbxassetid://13983568527", onClick: handleBuyPotionLevel1 },
-        { id: 2, name: "Зелье 2", imageUrl: "rbxassetid://9412229136", onClick: handleBuyPotionLevel2 },
-        { id: 3, name: "Зелье 3", imageUrl: "rbxassetid://9412224148", onClick: handleBuyPotionLevel3 },
-    ]
+        { id: 1, name: "Зелье 1", imageUrl: "rbxassetid://13983568527", onClick: () => handleBuyPotionLevel(1, 10, 3, 30) },
+        { id: 2, name: "Зелье 2", imageUrl: "rbxassetid://9412229136", onClick: () => handleBuyPotionLevel(2, 15000, 200, 70) },
+        { id: 3, name: "Зелье 3", imageUrl: "rbxassetid://9412224148", onClick: () => handleBuyPotionLevel(3, 100000, 500, 130) },
+    ];
 
     const generateRandomPosition = () => {
         const minX = 0.1;
@@ -106,7 +99,7 @@ export function Menu() {
                     position={upgradeButtonPosition}
                     anchorPoint={new Vector2(0.5, 0.5)}
                 />
-            )}
+            )}        
         </>
     );
 }

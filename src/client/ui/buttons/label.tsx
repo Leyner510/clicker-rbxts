@@ -10,31 +10,34 @@ interface AdditionalMenuProps {
 
 
 export function AdditionalMenu({ isVisible, products }: AdditionalMenuProps) {
-    const [menuPosition, menuPositionMotion] = useMotion(0);
-    const [menuTransparency, menuTransparencyMotion] = useMotion(1);
-    const [textTransparency, textTransparencyMotion] = useMotion(1);
-
-
+    const [animations, animationsMotion] = useMotion({
+        menuPosition: 0,
+        menuTransparency: 1,
+        textTransparency: 1,
+    });
 
     useEffect(() => {
         if (isVisible) {
-            menuPositionMotion.spring(1, springs.responsive);
-            menuTransparencyMotion.spring(0, springs.responsive);
-            textTransparencyMotion.spring(0, springs.responsive);
+            animationsMotion.spring({
+                menuPosition: 1,
+                menuTransparency: 0,
+                textTransparency: 0,
+            }, springs.responsive);
         } else {
-            menuPositionMotion.spring(0, springs.responsive);
-            menuTransparencyMotion.spring(1, springs.responsive);
-            textTransparencyMotion.spring(1, springs.responsive);
+            animationsMotion.spring({
+                menuPosition: 0,
+                menuTransparency: 1,
+                textTransparency: 1,
+            }, springs.responsive);
         }
-    }, [isVisible]);
-
+    }, [isVisible, animationsMotion]);
 
     return (
         <frame
             BackgroundColor3={Color3.fromRGB(255, 255, 255)}
-            BackgroundTransparency={menuTransparency}
+            BackgroundTransparency={animations.map((anim) => anim.menuTransparency)}
             Size={UDim2.fromScale(0.2, 0.6)}
-            Position={menuPosition.map((y) => new UDim2(0.1, 0, 0.7 - y * 0.2, 0))}
+            Position={animations.map((anim) => new UDim2(0.1, 0, 0.7 - anim.menuPosition * 0.2, 0))}
             AnchorPoint={new Vector2(0.5, 0.5)}
             Visible={isVisible}
         >
@@ -48,9 +51,9 @@ export function AdditionalMenu({ isVisible, products }: AdditionalMenuProps) {
                 BackgroundTransparency={1}
                 Position={UDim2.fromScale(0.5, 0.1)}
                 AnchorPoint={new Vector2(0.5, 0)}
-                TextTransparency={textTransparency}
+                TextTransparency={animations.map((anim) => anim.textTransparency)}
             />
-            <ProductMenu products={products} isVisible={isVisible}/>{}
+            <ProductMenu products={products} isVisible={isVisible} />
         </frame>
     );
 };

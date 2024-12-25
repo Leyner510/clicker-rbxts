@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "@rbxts/react";
 import { springs } from "../utils/springs";
 import { palette } from "../utils/palette";
 import { brighten } from "../utils/color-utils";
-import { useClickSound } from "../hooks/use-sound";
+import { SoundController } from "client/controllers/sound-controller";
 
 
 interface ButtonProps {
@@ -56,7 +56,7 @@ export function Button({
         }
     }, [pressed]);
 
-    const playClickSound = useClickSound({ soundId });
+    const playClickSound = SoundController();
 
     const handleClick = () => {
         if (onClick) {

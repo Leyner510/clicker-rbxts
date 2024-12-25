@@ -1,4 +1,4 @@
-import { Button } from "../buttons/botton";
+import { Button } from "../buttons/button";
 import React from "@rbxts/react";
 
 export interface IProduct {
@@ -33,13 +33,13 @@ export function ProductMenu({ products, isVisible }: IProductMenuProps) {
                     position={UDim2.fromScale(0.5, 0.2 + index * 0.3)}
                     anchorPoint={new Vector2(0.5, 0.5)}
                 >
-                <imagelabel
-                Image={product.imageUrl}
-                Size={UDim2.fromScale(0.8, 0.8)}
-                Position={UDim2.fromScale(0.5, 0.5)}
-                AnchorPoint={new Vector2(0.5, 0.5)}
-                BackgroundTransparency={1}
-                />
+                    <imagelabel
+                        Image={product.imageUrl}
+                        Size={UDim2.fromScale(0.4, 0.6)}
+                        Position={UDim2.fromScale(0.3, 0.5)}
+                        AnchorPoint={new Vector2(0.5, 0.5)}
+                        BackgroundTransparency={1}
+                    />
                 </Button>
             ))}
         </frame>

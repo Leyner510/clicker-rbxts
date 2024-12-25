@@ -3,6 +3,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { atom, subscribe } from "@rbxts/charm";
 import CharmSync from "@rbxts/charm-sync";
 import { ServerEvents } from "shared/Events";
+import { Workspace } from "@rbxts/services";
 
 @Component()
 export class PlayerComponent extends BaseComponent<{}, Player> implements OnStart {
@@ -20,7 +21,7 @@ export class PlayerComponent extends BaseComponent<{}, Player> implements OnStar
 			updates: this.updatesAtoms, 
 			potionLevel: this.potionLevelAtom,
 			clickBonus: this.clickBonusAtom,
-			clicksRemaining: this.clicksRemainingAtom
+			clicksRemaining: this.clicksRemainingAtom,
 		},
 	});
 
@@ -105,50 +106,69 @@ export class PlayerComponent extends BaseComponent<{}, Player> implements OnStar
 		}
 	}
 
-	public buyPotionLevel1() {
+	public buyPotionLevel(level: number, cost: number, clickBonus: number, clicksRemaining: number) {
 		const currentMoney = this.moneyAtom();
 		const currentUpgrade = this.updatesAtoms();
+		const currentClicksRemaining = this.clicksRemainingAtom();
 
-		if (currentUpgrade >= 1 && currentMoney >= 10) {
-			this.moneyAtom((currentMoney) => currentMoney - 10);
-			this.potionLevelAtom(1)
-			this.clickBonusAtom(3)
-			this.clicksRemainingAtom(30)
-			print("potion Level 1 purchased")
+		if (currentClicksRemaining > 0) {
+			print("У вас уже есть активное зелье. Пожалуйста, используйте все бонусные клики.");
+			return;
+		}
 
+		if (currentUpgrade >= level && currentMoney >= cost) {
+			this.moneyAtom((currentMoney) => currentMoney - cost);
+			this.potionLevelAtom(level);
+			this.clickBonusAtom(clickBonus);
+			this.clicksRemainingAtom(clicksRemaining);
+			this.spawnPotionModel(level)
+			print(`Potion Level ${level} purchased.`);
 		} else {
-			print("Not enough money or upgrades for Potion Level 1.")
+			print(`Not enough money or upgrades for Potion Level ${level}.`);
 		}
 	}
 
-	public buyPotionLevel2() {
-		const currentMoney = this.moneyAtom();
-		const currentUpgrade = this.updatesAtoms();
+	private spawnPotionModel(level: number) {
+		const replicatedStorage = game.GetService("ReplicatedStorage");
+		const potionModelsFolder = replicatedStorage.FindFirstChild("PotionModels") as Folder | undefined;
 
-		if (currentUpgrade >= 25 && currentMoney >= 15000) {
-			this.moneyAtom((currentMoney) => currentMoney - 15000);
-			this.potionLevelAtom(2);
-			this.clickBonusAtom(200)
-			this.clicksRemainingAtom(70)
-			print("Potion Level 2 purchased.");
-		} else {
-			print("Not enough money or upgrades for Potion Level 2.");
+		if (!potionModelsFolder) {
+			print("Папка с моделями зелий не найдена.");
+			return;
 		}
-	}
 
-	public buyPotionLevel3() {
-		const currentMoney = this.moneyAtom();
-		const currentUpgrade = this.updatesAtoms();
-		const currentPotionLevel = this.potionLevelAtom();
+		const potionModel = potionModelsFolder.FindFirstChild(`PotionLevel${level}`) as Model | undefined;
 
-		if (currentUpgrade >= 40 && currentMoney >= 100000) {
-			this.moneyAtom((currentMoney) => currentMoney - 100000);
-			this.potionLevelAtom(3);
-			this.clickBonusAtom(500)
-			this.clicksRemainingAtom(130)
-			print("Potion Level 3 purchased.");
+		if (!potionModel) {
+			print(`Модель зелья уровня ${level} не найдена.`);
+			return;
+		}
+
+		const playerCharacter = this.instance.Character;
+		if (!playerCharacter) {
+			print("Персонаж игрока не найден.");
+			return;
+		}
+
+		const playerRootPart = playerCharacter.FindFirstChild("HumanoidRootPart") as BasePart | undefined;
+		if (!playerRootPart) {
+			print("Корневая часть персонажа не найдена.");
+			return;
+		}
+
+		const ray = new Ray(playerRootPart.Position, new Vector3(0, -5, 0));
+		const ignoreList = [playerCharacter];
+		const params = new RaycastParams();
+		params.FilterDescendantsInstances = ignoreList;
+		params.FilterType = Enum.RaycastFilterType.Exclude;
+		const result = Workspace.Raycast(ray.Origin, ray.Direction, params);
+
+		if (result) {
+			const newPotionModel = potionModel.Clone();
+			newPotionModel.Parent = Workspace;
+			newPotionModel.PrimaryPart!.CFrame = new CFrame(result.Position).mul(CFrame.Angles(0, math.rad(math.random(0, 360)), 0));
 		} else {
-			print("Not enough money or upgrades for Potion Level 3.");
+			print("Не удалось найти место для размещения зелья.");
 		}
 	}
 

@@ -2,7 +2,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { Players } from "@rbxts/services";
 import ReactRoblox from "@rbxts/react-roblox";
 import React from "@rbxts/react";
-import { Button } from "client/ui/buttons/botton";
+import { Button } from "client/ui/buttons/button";
 
 @Controller({})
 export class UserInterfaceController implements OnStart {

@@ -4,9 +4,9 @@ import { Layer } from "./layer";
 import { Menu } from "./manager-gui";
 
 export function App() {
-	return (
-		<Layer>
-			<Menu/>
-		</Layer>
-	);
+    return (
+        <Layer>
+            <Menu />
+        </Layer>
+    );
 }

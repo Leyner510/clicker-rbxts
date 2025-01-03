@@ -12,4 +12,15 @@ root.render(<StrictMode>{createPortal(<App />, target)}</StrictMode>);
 Flamework.addPaths("src/client");
 Flamework.addPaths("src/shared");
 
+
 Flamework.ignite();
+
+
+// useEffect(() => {
+//     UserInputService.InputBegan.Connect((input, gameProcessed) => {
+//         if (gameProcessed) return;
+//         if (input.KeyCode === Enum.KeyCode.E) {
+//             ClientEvents.waterPlant.fire();
+//         }
+//     });
+// }, []);

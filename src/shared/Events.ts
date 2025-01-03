@@ -11,12 +11,13 @@ interface ClientToServerEvents {
 	buyUpgrade: () => void;
 	buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
 	money: () => void;
-	hydrateForMoney : () => CharmSync.SyncPayload<{ 
-		money: Atom<number> 
+	hydrateForMoney:() => CharmSync.SyncPayload<{
+		money: Atom<number>
 	}>;
 	hydrate: () => CharmSync.SyncPayload<{
 		clicks: Atom<number>;
 	}>;
+	waterPlant: () => void;
 }
 
 interface ServerToClientEvents {
@@ -28,6 +29,8 @@ interface ServerToClientEvents {
 		clickBonus: Atom<number>;
 		clicksRemaining: Atom<number>;
 	}>[]) => void;
+	updatePlantState: (payload: any) => void;
+	giveSeedTool: () =>void;
 }
 
 const GlobalEvents = Networking.createEvent<

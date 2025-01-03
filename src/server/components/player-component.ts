@@ -1,9 +1,11 @@
-import { OnStart } from "@flamework/core";
+import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { atom, subscribe } from "@rbxts/charm";
 import CharmSync from "@rbxts/charm-sync";
 import { ServerEvents } from "shared/Events";
 import { Workspace } from "@rbxts/services";
+import { CharmedComponents } from "@rbxts/charmed-components";
+import { Inject } from "@rbxts/flamework-di-toolkit";
 
 @Component()
 export class PlayerComponent extends BaseComponent<{}, Player> implements OnStart {
@@ -25,6 +27,8 @@ export class PlayerComponent extends BaseComponent<{}, Player> implements OnStar
 		},
 	});
 
+	// @Inject
+	// private charmedComponents!: CharmedComponents;
 	private leaderstatsFolder: Folder | undefined
 
 	public onStart() {
@@ -174,5 +178,6 @@ export class PlayerComponent extends BaseComponent<{}, Player> implements OnStar
 
 	public hydrate() {
 		this.syncer.hydrate(this.instance);
+		// this.charmedComponents.hydrate(this.instance)
 	}
 }

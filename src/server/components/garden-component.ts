@@ -36,7 +36,7 @@ export class GardenComponent extends BaseComponent<GardenState, Part> implements
         });
     }
 
-    public waterPlant() {
+    public waterPlant() {  
         if (this.seedStage() > 0) {
             this.lastWatered(() => os.time());
         }

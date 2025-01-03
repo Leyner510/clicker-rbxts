@@ -7,20 +7,14 @@
 		"ts:out/server/components/check-grounded-component@GroundCheckComponent": "server/components/check-grounded-component@GroundCheckComponent",
 		"ts:out/server/components/player-component@PlayerComponent": "server/components/player-component@PlayerComponent",
 		"ts:out/server/services/player-service@PlayerService": "server/services/player-service@PlayerService",
-<<<<<<< HEAD
 		"ts:out/shared/Events@GlobalEvents": "shared/Events@GlobalEvents",
-		"ts:out/client/controllers/ui-controller@UserInterfaceController": "client/controllers/ui-controller@UserInterfaceController",
 		"ts:out/server/services/room-generator-service@RoomGeneratorService": "server/services/room-generator-service@RoomGeneratorService",
-		"ts:out/server/components/check-grounded-component@GroundCheckComponent": "server/components/check-grounded-component@GroundCheckComponent",
 		"ts:out/server/components/leaderstat@LeaderStatsComponent": "server/components/leaderstat@LeaderStatsComponent",
 		"ts:out/server/components/plant-component@PlantComponent": "server/components/plant-component@PlantComponent",
 		"ts:out/server/components/plant-bed-component@PlantBedComponent": "server/components/plant-bed-component@PlantBedComponent",
 		"ts:out/server/components/seed-component@SeedComponent": "server/components/seed-component@SeedComponent",
 		"ts:out/server/components/watering-can-component@WateringCanComponent": "server/components/watering-can-component@WateringCanComponent",
 		"ts:out/server/components/garden-component@GardenComponent": "server/components/garden-component@GardenComponent"
-=======
-		"ts:out/shared/Events@GlobalEvents": "shared/Events@GlobalEvents"
->>>>>>> 758b0de4805cfed0018596bd71194a34256443d0
 	},
 	"metadata": {}
 }

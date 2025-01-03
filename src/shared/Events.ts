@@ -6,7 +6,6 @@ import { RunService } from "@rbxts/services";
 export const IS_PLUGIN = RunService.IsStudio() && RunService.IsRunning();
 
 interface ClientToServerEvents {
-<<<<<<< HEAD
 	click: () => void;
 	buyUpgrade: () => void;
 	buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
@@ -31,7 +30,19 @@ interface ServerToClientEvents {
 	}>[]) => void;
 	updatePlantState: (payload: any) => void;
 	giveSeedTool: () =>void;
-=======
+    click: () => void;
+    buyUpgrade: () => void;
+    buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
+    money: () => void;
+    hydrateForMoney: () => CharmSync.SyncPayload<{
+        money: Atom<number>
+    }>;
+    hydrate: () => CharmSync.SyncPayload<{
+        clicks: Atom<number>;
+    }>;
+}
+
+interface ServerToClientEvents {
     click: () => void;
     buyUpgrade: () => void;
     buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
@@ -54,7 +65,6 @@ interface ServerToClientEvents {
         clicksRemaining: Atom<number>;
     }>[]) => void;
     showNPCMenu: (player: Player) => void;
->>>>>>> 758b0de4805cfed0018596bd71194a34256443d0
 }
 
 const GlobalEvents = Networking.createEvent<

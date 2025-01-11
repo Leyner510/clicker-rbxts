@@ -26,7 +26,7 @@
     "@flamework/networking": "^1.2.3",
     "@rbxts/charm": "^0.8.1",
     "@rbxts/charm-sync": "^0.1.1",
-    "@rbxts/charmed-components": "^1.0.3",
+    "@rbxts/charmed-components": "^1.1.0",
     "@rbxts/event-emitter": "^1.4.0",
     "@rbxts/flamework-di-toolkit": "^1.0.0",
     "@rbxts/flamework-react-utils": "^1.0.6",

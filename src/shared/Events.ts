@@ -6,30 +6,6 @@ import { RunService } from "@rbxts/services";
 export const IS_PLUGIN = RunService.IsStudio() && RunService.IsRunning();
 
 interface ClientToServerEvents {
-	click: () => void;
-	buyUpgrade: () => void;
-	buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
-	money: () => void;
-	hydrateForMoney:() => CharmSync.SyncPayload<{
-		money: Atom<number>
-	}>;
-	hydrate: () => CharmSync.SyncPayload<{
-		clicks: Atom<number>;
-	}>;
-	waterPlant: () => void;
-}
-
-interface ServerToClientEvents {
-	updateAtoms: (payload: CharmSync.SyncPayload<{
-		clicks: Atom<number>;
-		money: Atom<number>;
-		updates: Atom<number>;
-		potionLevel: Atom<number>;
-		clickBonus: Atom<number>;
-		clicksRemaining: Atom<number>;
-	}>[]) => void;
-	updatePlantState: (payload: any) => void;
-	giveSeedTool: () =>void;
     click: () => void;
     buyUpgrade: () => void;
     buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
@@ -40,23 +16,12 @@ interface ServerToClientEvents {
     hydrate: () => CharmSync.SyncPayload<{
         clicks: Atom<number>;
     }>;
+    waterPlant: (platform: BasePart) => void;
+    placeSeed: (seedModel: Model, platform: BasePart) => void;
 }
 
 interface ServerToClientEvents {
-    click: () => void;
-    buyUpgrade: () => void;
-    buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
-    money: () => void;
-    hydrateForMoney: () => CharmSync.SyncPayload<{
-        money: Atom<number>
-    }>;
-    hydrate: () => CharmSync.SyncPayload<{
-        clicks: Atom<number>;
-    }>;
-}
-
-interface ServerToClientEvents {
-    updateAtoms: (payloads: CharmSync.SyncPayload<{
+    updateAtoms: (payload: CharmSync.SyncPayload<{
         clicks: Atom<number>;
         money: Atom<number>;
         updates: Atom<number>;
@@ -64,7 +29,19 @@ interface ServerToClientEvents {
         clickBonus: Atom<number>;
         clicksRemaining: Atom<number>;
     }>[]) => void;
-    showNPCMenu: (player: Player) => void;
+    updatePlantState: (paylod : any) => void;
+    click: () => void;
+    buyUpgrade: () => void;
+    buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
+    money: () => void;
+    hydrateForMoney: () => CharmSync.SyncPayload<{
+        money: Atom<number>
+    }>;
+    hydrate: () => CharmSync.SyncPayload<{
+        clicks: Atom<number>;
+    }>;
+    waterPlant: (platform: BasePart) => void;
+    placeSeed: (seedModel: Model, platform: BasePart) => void;
 }
 
 const GlobalEvents = Networking.createEvent<

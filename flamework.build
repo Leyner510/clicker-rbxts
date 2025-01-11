@@ -14,7 +14,10 @@
 		"ts:out/server/components/plant-bed-component@PlantBedComponent": "server/components/plant-bed-component@PlantBedComponent",
 		"ts:out/server/components/seed-component@SeedComponent": "server/components/seed-component@SeedComponent",
 		"ts:out/server/components/watering-can-component@WateringCanComponent": "server/components/watering-can-component@WateringCanComponent",
-		"ts:out/server/components/garden-component@GardenComponent": "server/components/garden-component@GardenComponent"
+		"ts:out/server/components/garden-component@GardenComponent": "server/components/garden-component@GardenComponent",
+		"ts:out/shared/components/garden-component@GardenComponent": "shared/components/garden-component@GardenComponent",
+		"ts:out/server/components/garden-component@ServerGardenComponent": "server/components/garden-component@ServerGardenComponent",
+		"ts:out/client/components/garden-component@ClientGardenComponent": "client/components/garden-component@ClientGardenComponent"
 	},
 	"metadata": {}
 }

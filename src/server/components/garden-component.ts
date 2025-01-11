@@ -1,59 +1,80 @@
-import { Component, BaseComponent } from "@flamework/components";
-import { atom } from "@rbxts/charm";
-import { OnStart } from "@flamework/core";
-import { Players, ReplicatedStorage, RunService} from "@rbxts/services";
-
-interface GardenState {
-    seedStage: number; // 0 - no seed, 1 - sprout, 2 - medium, 3 - grown
-    lastWatered: number;
-}
+import { Component } from "@flamework/components";
+import { Action, Subscribe } from "@rbxts/charmed-components";
+import { Workspace } from "@rbxts/services";
+import { GardenComponent } from "shared/components/garden-component";
 
 @Component()
-export class GardenComponent extends BaseComponent<GardenState, Part> implements OnStart {
-    private seedStage = atom(0);
-    private lastWatered = atom(0);
+export class ServerGardenComponent extends GardenComponent {
 
-    public onStart() {
+    @Action
+    public waterPlant() {
+        const state = this.getState();
+        const currentTime = Workspace.GetServerTimeNow();
 
-        this.instance.Touched.Connect((otherPart) => {
-            const player = Players.GetPlayerFromCharacter(otherPart.Parent as Model);
-            if (player && player.Character && player.Character.PrimaryPart) {
-                const seedModel = ReplicatedStorage.FindFirstChild("SeedModel") as Model | undefined;
-                if (seedModel) {
-                    const seedClone = seedModel.Clone();
-                    seedClone.Parent = this.instance;
-                    if (seedClone.PrimaryPart) {
-                        seedClone.PrimaryPart.Position = this.instance.Position.add(new Vector3(0, 1, 0));
-                    }
-                    this.seedStage((currentStage) => currentStage + 1); // Set seed stage to 1
-                    this.lastWatered(() => os.time());
-                }
-            }
-        });
-
-        RunService.Heartbeat.Connect(() => {
-            this.updatePlant();
-        });
-    }
-
-    public waterPlant() {  
-        if (this.seedStage() > 0) {
-            this.lastWatered(() => os.time());
+        if (currentTime - state.lastWatered < 10) {
+            print("Растение можно полить только раз в 10 секунд.");
+            return;
         }
+
+        const platform = this.instance;
+        const seedModel = platform.FindFirstChild("Seed") as Model | undefined;
+
+        if (!seedModel) {
+            print("На платформе нет семечка.");
+            return;
+        }
+
+        const newStage = math.min(state.seedStage + 1, 2);
+        return {
+            ...state,
+            seedStage: newStage,
+            lastWatered: currentTime,
+        };
     }
 
+    @Action
     public updatePlant() {
-        const currentTime = os.time();
-        const timeSinceWatered = currentTime - this.lastWatered();
+        const currentState = this.getState();
+        const platform = this.instance;
+        const sproutModel = platform.FindFirstChild("Sprout") as Model | undefined;
 
-        if (timeSinceWatered > 10) {
-            this.seedStage(() => 0);
-        } else {
-            if (this.seedStage() === 1 && timeSinceWatered >= 10) {
-                this.seedStage(() => 2);
-            } else if (this.seedStage() === 2 && timeSinceWatered >= 20) {
-                this.seedStage(() => 3);
+        if (sproutModel && currentState.seedStage === 2) {
+            sproutModel.Parent = undefined;
+
+            const proximityPrompt = platform.FindFirstChildOfClass("ProximityPrompt");
+            if (proximityPrompt) {
+                proximityPrompt.Destroy();
             }
+
+        } else if (sproutModel) {
+            const stageModelName = `SproutStage${currentState.seedStage}`;
+            const replicatedStorage = game.GetService("ReplicatedStorage");
+            const stageModel = replicatedStorage.FindFirstChild(stageModelName) as Model | undefined;
+
+            if (stageModel) {
+                sproutModel.Parent = undefined;
+                const newSproutModel = stageModel.Clone();
+                newSproutModel.Parent = platform;
+                newSproutModel.Name = "Sprout";
+            } else {
+                print(`Модель стадии ростка ${stageModelName} не найдена в ReplicatedStorage.`);
+            }
+        } else {
+            print("Модель ростка не найдена на платформе.");
         }
+    }
+
+    @Action
+    public placeSeed() {
+        const state = this.getState();
+
+        if (state.seedStage === 0) {
+            return {
+                ...state,
+                seedStage: 1,
+                lastWatered: Workspace.GetServerTimeNow(),       
+            };
+        }
+        return state;
     }
 }

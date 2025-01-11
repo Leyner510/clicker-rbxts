@@ -3,18 +3,19 @@ import { OnStart, Service } from "@flamework/core";
 import { Players, ReplicatedStorage, Workspace } from "@rbxts/services";
 import { GroundCheckComponent } from "server/components/check-grounded-component";
 import { PlayerComponent } from "server/components/player-component";
-import { CharmedComponents } from "@rbxts/charmed-components";
 import { ServerEvents } from "shared/Events";
-import { GardenComponent } from "server/components/garden-component";
+import { ServerGardenComponent } from "server/components/garden-component";
 import { Inject } from "@rbxts/flamework-di-toolkit";
+import { CharmedComponents } from "@rbxts/charmed-components";
+import { GardenComponent } from "shared/components/garden-component";
 
 @Service()
 export class PlayerService implements OnStart {
     @Inject
     private components!: Components;
-    
-    // @Inject
-    // private charmedComponents!: CharmedComponents;
+
+    @Inject
+    private charmedComponents!: CharmedComponents;
 
     public onStart() {
         ServerEvents.hydrate.connect((player) => {
@@ -37,37 +38,48 @@ export class PlayerService implements OnStart {
             playerComponent?.buyPotionLevel(level, cost, clickBonus, clicksRemaining);
         });
 
-        ServerEvents.waterPlant.connect((player) => {
-            const character = player.Character;
-            if (character && character.PrimaryPart) {
-                const ray = new Ray(character.PrimaryPart.Position, character.PrimaryPart.CFrame.LookVector.mul(5));
-                const result = Workspace.Raycast(ray.Origin, ray.Direction);
-                if (result) {
-                    const gardenComponent = this.components.getComponent<GardenComponent>(result.Instance);
-                    if (gardenComponent) {
-                        gardenComponent.waterPlant();
-                    }
+        ServerEvents.waterPlant.connect((player, platform) => {
+            const gardenComponent = this.components.getComponent<ServerGardenComponent>(platform);
+            if (gardenComponent) {
+                gardenComponent.waterPlant();
+                this.spawnTomato(platform)
+                const proximityPromptDelete = platform.FindFirstChildOfClass("ProximityPrompt");
+                if (proximityPromptDelete) {
+                    proximityPromptDelete.Destroy();
+                }
+                print("Метод waterPlant вызван для платформы:", platform.Name);
+            } else {
+                print("Компонент ServerGardenComponent не найден на платформе:", platform.Name);
+            }
+        });
+
+        ServerEvents.placeSeed.connect((player, seedModel, platform) => {
+            const gardenComponent = this.components.getComponent<ServerGardenComponent>(platform);
+            if (gardenComponent) {
+                gardenComponent.placeSeed();
+                this.spawnSprout(platform);
+                const proximityPromptDelete = platform.FindFirstChildOfClass("ProximityPrompt");
+                if (proximityPromptDelete) {
+                    proximityPromptDelete.Destroy();
                 }
             }
         });
 
         Players.PlayerAdded.Connect((player) => {
             this.components.addComponent<PlayerComponent>(player);
-            this.giveSeedTool(player);
-        });
-
-        Players.PlayerAdded.Connect((player) => {
             player.CharacterAdded.Connect((character) => {
+                this.spawnSeedModel(character);
+                this.spawnWaterCanModel(character);
                 const humanoidRootPart = character.FindFirstChild("HumanoidRootPart") as BasePart | undefined;
                 if (humanoidRootPart) {
-                    this.components.getComponent<GroundCheckComponent>(humanoidRootPart);
+                    this.components.addComponent<GroundCheckComponent>(humanoidRootPart);
                 }
             });
         });
 
-        // this.charmedComponents.watchDispatch((player, payload) => {
-        //     ServerEvents.updatePlantState.fire(player, payload);
-        // });
+        this.charmedComponents.watchDispatch((player, payload) => {
+            ServerEvents.updatePlantState.fire(player, payload);
+        });
 
         this.createGardens();
     }
@@ -90,6 +102,7 @@ export class PlayerService implements OnStart {
             garden.Position = position;
             garden.Color = gardenColor;
             garden.Anchored = true;
+            garden.CanCollide = true;
             garden.Parent = Workspace;
 
             const platform = new Instance("Part");
@@ -97,36 +110,118 @@ export class PlayerService implements OnStart {
             platform.Position = position.add(new Vector3(0, 2, 0));
             platform.Color = platformColor;
             platform.Anchored = true;
+            platform.CanCollide = true;
             platform.Parent = garden;
 
-            this.components.getComponent<GardenComponent>(platform);
+            const proximityPrompt = new Instance("ProximityPrompt");
+            proximityPrompt.ActionText = "Посадить семя";
+            proximityPrompt.ObjectText = "Платформа для посадки семени";
+            proximityPrompt.HoldDuration = 0;
+            proximityPrompt.Parent = platform;
+
+            this.components.addComponent<ServerGardenComponent>(platform);
         });
     }
-    private giveSeedTool(player: Player) {
-        let backpack = player.FindFirstChild("Backpack") as Backpack | undefined;
-        if (!backpack) {
-            backpack = new Instance("Backpack");
-            backpack.Name = "Backpack";
-            backpack.Parent = player;
-            print(`Backpack created for player: ${player.Name}`);
-        } else {
-            print(`Backpack found for player: ${player.Name}`);
+
+    private spawnSeedModel(character: Model) {
+        const replicatedStorage = game.GetService("ReplicatedStorage");
+        const seedModelFolder = replicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
+
+        if (!seedModelFolder) {
+            print("Папка с моделями семян не найдена.");
+            return;
         }
 
-        const seedModel = ReplicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
-        if (seedModel) {
-            print(`SeedModel found in ReplicatedStorage`);
-            const seedTool = seedModel.FindFirstChild("Seed") as Tool | undefined;
-            if (seedTool) {
-                print(`Seed tool found in SeedModel`);
-                const seedClone = seedTool.Clone();
-                seedClone.Parent = backpack;
-                print(`Seed tool cloned and added to Backpack`);
-            } else {
-                print(`Seed tool not found in SeedModel`);
-            }
-        } else {
-            print(`SeedModel not found in ReplicatedStorage`);
+        const seedModel = seedModelFolder.FindFirstChild("Seed") as Model | undefined;
+
+        if (!seedModel) {
+            print("Модель семени не найдена.");
+            return;
         }
+
+        const newSeedModel = seedModel.Clone();
+        newSeedModel.Parent = character;
+        newSeedModel.Name = "Seed";
+    }
+
+    private spawnWaterCanModel(character: Model) {
+        const replicatedStorage = game.GetService("ReplicatedStorage");
+        const waterCanModel = replicatedStorage.FindFirstChild("WaterCan") as Model | undefined;
+
+        if (!waterCanModel) {
+            print("Модель лейки не найдена.");
+            return;
+        }
+
+        const newWaterCanModel = waterCanModel.Clone();
+        newWaterCanModel.Parent = character;
+        newWaterCanModel.Name = "WaterCan";
+    }
+
+    private spawnSprout(platform: BasePart) {
+        const replicatedStorage = game.GetService("ReplicatedStorage");
+        const seedModelFolder = replicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
+
+        if (!seedModelFolder) {
+            print("Папка с моделями семян не найдена.");
+            return;
+        }
+
+        const sproutModel = seedModelFolder.FindFirstChild("Sprout") as Model | undefined;
+
+        if (!sproutModel) {
+            print("Модель ростка не найдена.");
+            return;
+        }
+
+        const newSproutModel = sproutModel.Clone();
+        const primaryPart = newSproutModel.PrimaryPart;
+
+        if (!primaryPart) {
+            print("У модели ростка нет PrimaryPart.");
+            return;
+        }
+
+        primaryPart.Position = platform.Position.add(new Vector3(0, 1, 0));
+        newSproutModel.Parent = platform;
+
+        const proximityPrompt = new Instance("ProximityPrompt");
+        proximityPrompt.ActionText = "Полить растение";
+        proximityPrompt.ObjectText = "Растение нужно полить";
+        proximityPrompt.HoldDuration = 0;
+        proximityPrompt.Parent = platform;
+
+        print("ProximityPrompt для полива создан на платформе:", platform.Name);
+    }
+
+    private spawnTomato(platform: BasePart) {
+        const replicatedStorage = game.GetService("ReplicatedStorage");
+        const seedModelFolder = replicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
+
+        if (!seedModelFolder) {
+            print("Папка с моделями семян не найдена.");
+            return;
+        }
+
+        const tomatoModel = seedModelFolder.FindFirstChild("Tomato") as Model | undefined;
+
+        if (!tomatoModel) {
+            print("Модель помидора не найдена.");
+            return;
+        }
+
+        const newTomatoModel = tomatoModel.Clone();
+        const primaryPart = newTomatoModel.PrimaryPart;
+
+        if (!primaryPart) {
+            print("У модели помидора нет PrimaryPart.");
+            return;
+        }
+
+        primaryPart.Position = platform.Position.add(new Vector3(0, 1, 0));
+        newTomatoModel.Parent = platform;
+        newTomatoModel.Name = "Tomato";
+
+        print("Модель помидора создана на платформе:", platform.Name);
     }
 }

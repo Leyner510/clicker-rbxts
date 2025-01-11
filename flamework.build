@@ -17,7 +17,8 @@
 		"ts:out/server/components/garden-component@GardenComponent": "server/components/garden-component@GardenComponent",
 		"ts:out/shared/components/garden-component@GardenComponent": "shared/components/garden-component@GardenComponent",
 		"ts:out/server/components/garden-component@ServerGardenComponent": "server/components/garden-component@ServerGardenComponent",
-		"ts:out/client/components/garden-component@ClientGardenComponent": "client/components/garden-component@ClientGardenComponent"
+		"ts:out/client/components/garden-component@ClientGardenComponent": "client/components/garden-component@ClientGardenComponent",
+		"ts:out/client/controllers/garden-controllers@GardenController": "client/controllers/garden-controllers@GardenController"
 	},
 	"metadata": {}
 }

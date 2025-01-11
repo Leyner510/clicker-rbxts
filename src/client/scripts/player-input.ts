@@ -56,7 +56,7 @@ userInputService.InputBegan.Connect((input) => {
                         if (seedModel) {
                             const platform = currentPrompt.Parent as BasePart;
                             if (platform) {
-                                ClientEvents.placeSeed.fire(seedModel, platform);
+                                ClientEvents.placeSeedClient.fire(platform);
                                 print("посажено");
                                 hintFrame.Visible = false;
                             } else {
@@ -80,12 +80,4 @@ userInputService.InputBegan.Connect((input) => {
                             print("У вас нет лейки.");
                         }
                     }
-                } else {
-                    print("У персонажа нет PrimaryPart.");
                 }
-            } else {
-                print("Персонаж игрока не найден.");
-            }
-        }
-    }
-});

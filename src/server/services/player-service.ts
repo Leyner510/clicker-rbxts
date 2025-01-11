@@ -1,13 +1,12 @@
 import { Components } from "@flamework/components";
 import { OnStart, Service } from "@flamework/core";
-import { Players, ReplicatedStorage, Workspace } from "@rbxts/services";
+import { Players, Workspace } from "@rbxts/services";
 import { GroundCheckComponent } from "server/components/check-grounded-component";
 import { PlayerComponent } from "server/components/player-component";
-import { ServerEvents } from "shared/Events";
+import { ClientEvents, ServerEvents } from "shared/Events";
 import { ServerGardenComponent } from "server/components/garden-component";
 import { Inject } from "@rbxts/flamework-di-toolkit";
 import { CharmedComponents } from "@rbxts/charmed-components";
-import { GardenComponent } from "shared/components/garden-component";
 
 @Service()
 export class PlayerService implements OnStart {
@@ -42,7 +41,6 @@ export class PlayerService implements OnStart {
             const gardenComponent = this.components.getComponent<ServerGardenComponent>(platform);
             if (gardenComponent) {
                 gardenComponent.waterPlant();
-                this.spawnTomato(platform)
                 const proximityPromptDelete = platform.FindFirstChildOfClass("ProximityPrompt");
                 if (proximityPromptDelete) {
                     proximityPromptDelete.Destroy();
@@ -53,23 +51,22 @@ export class PlayerService implements OnStart {
             }
         });
 
-        ServerEvents.placeSeed.connect((player, seedModel, platform) => {
+        ServerEvents.placeSeed.connect((seedModel, platform) => {
             const gardenComponent = this.components.getComponent<ServerGardenComponent>(platform);
             if (gardenComponent) {
-                gardenComponent.placeSeed();
-                this.spawnSprout(platform);
-                const proximityPromptDelete = platform.FindFirstChildOfClass("ProximityPrompt");
-                if (proximityPromptDelete) {
-                    proximityPromptDelete.Destroy();
+                const newState = gardenComponent.placeSeed();
+                const player = Players.GetPlayerFromCharacter(seedModel.Parent as Model);
+                if (player) {
+                    ClientEvents.placeSeed.fire(seedModel, platform);
                 }
+            } else {
+                print("Компонент ServerGardenComponent не найден на платформе:", platform.Name);
             }
         });
 
         Players.PlayerAdded.Connect((player) => {
             this.components.addComponent<PlayerComponent>(player);
             player.CharacterAdded.Connect((character) => {
-                this.spawnSeedModel(character);
-                this.spawnWaterCanModel(character);
                 const humanoidRootPart = character.FindFirstChild("HumanoidRootPart") as BasePart | undefined;
                 if (humanoidRootPart) {
                     this.components.addComponent<GroundCheckComponent>(humanoidRootPart);
@@ -121,107 +118,5 @@ export class PlayerService implements OnStart {
 
             this.components.addComponent<ServerGardenComponent>(platform);
         });
-    }
-
-    private spawnSeedModel(character: Model) {
-        const replicatedStorage = game.GetService("ReplicatedStorage");
-        const seedModelFolder = replicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
-
-        if (!seedModelFolder) {
-            print("Папка с моделями семян не найдена.");
-            return;
-        }
-
-        const seedModel = seedModelFolder.FindFirstChild("Seed") as Model | undefined;
-
-        if (!seedModel) {
-            print("Модель семени не найдена.");
-            return;
-        }
-
-        const newSeedModel = seedModel.Clone();
-        newSeedModel.Parent = character;
-        newSeedModel.Name = "Seed";
-    }
-
-    private spawnWaterCanModel(character: Model) {
-        const replicatedStorage = game.GetService("ReplicatedStorage");
-        const waterCanModel = replicatedStorage.FindFirstChild("WaterCan") as Model | undefined;
-
-        if (!waterCanModel) {
-            print("Модель лейки не найдена.");
-            return;
-        }
-
-        const newWaterCanModel = waterCanModel.Clone();
-        newWaterCanModel.Parent = character;
-        newWaterCanModel.Name = "WaterCan";
-    }
-
-    private spawnSprout(platform: BasePart) {
-        const replicatedStorage = game.GetService("ReplicatedStorage");
-        const seedModelFolder = replicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
-
-        if (!seedModelFolder) {
-            print("Папка с моделями семян не найдена.");
-            return;
-        }
-
-        const sproutModel = seedModelFolder.FindFirstChild("Sprout") as Model | undefined;
-
-        if (!sproutModel) {
-            print("Модель ростка не найдена.");
-            return;
-        }
-
-        const newSproutModel = sproutModel.Clone();
-        const primaryPart = newSproutModel.PrimaryPart;
-
-        if (!primaryPart) {
-            print("У модели ростка нет PrimaryPart.");
-            return;
-        }
-
-        primaryPart.Position = platform.Position.add(new Vector3(0, 1, 0));
-        newSproutModel.Parent = platform;
-
-        const proximityPrompt = new Instance("ProximityPrompt");
-        proximityPrompt.ActionText = "Полить растение";
-        proximityPrompt.ObjectText = "Растение нужно полить";
-        proximityPrompt.HoldDuration = 0;
-        proximityPrompt.Parent = platform;
-
-        print("ProximityPrompt для полива создан на платформе:", platform.Name);
-    }
-
-    private spawnTomato(platform: BasePart) {
-        const replicatedStorage = game.GetService("ReplicatedStorage");
-        const seedModelFolder = replicatedStorage.FindFirstChild("SeedModel") as Folder | undefined;
-
-        if (!seedModelFolder) {
-            print("Папка с моделями семян не найдена.");
-            return;
-        }
-
-        const tomatoModel = seedModelFolder.FindFirstChild("Tomato") as Model | undefined;
-
-        if (!tomatoModel) {
-            print("Модель помидора не найдена.");
-            return;
-        }
-
-        const newTomatoModel = tomatoModel.Clone();
-        const primaryPart = newTomatoModel.PrimaryPart;
-
-        if (!primaryPart) {
-            print("У модели помидора нет PrimaryPart.");
-            return;
-        }
-
-        primaryPart.Position = platform.Position.add(new Vector3(0, 1, 0));
-        newTomatoModel.Parent = platform;
-        newTomatoModel.Name = "Tomato";
-
-        print("Модель помидора создана на платформе:", platform.Name);
     }
 }

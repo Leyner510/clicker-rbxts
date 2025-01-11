@@ -1,3 +1,4 @@
+// src/shared/Events.ts
 import { Networking } from "@flamework/networking";
 import type { Atom } from "@rbxts/charm";
 import type CharmSync from "@rbxts/charm-sync";
@@ -17,6 +18,7 @@ interface ClientToServerEvents {
         clicks: Atom<number>;
     }>;
     waterPlant: (platform: BasePart) => void;
+    placeSeedClient: (platform: BasePart) => void;
     placeSeed: (seedModel: Model, platform: BasePart) => void;
 }
 
@@ -29,7 +31,7 @@ interface ServerToClientEvents {
         clickBonus: Atom<number>;
         clicksRemaining: Atom<number>;
     }>[]) => void;
-    updatePlantState: (paylod : any) => void;
+    updatePlantState: (payload: any) => void;
     click: () => void;
     buyUpgrade: () => void;
     buyPotionLevel: (level: number, cost: number, clickBonus: number, clicksRemaining: number) => void;
